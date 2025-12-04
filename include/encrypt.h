@@ -1,20 +1,27 @@
+/**
+ * @file encrypt.h
+ * @brief Encrypt plaintext of password or decrypt ciphertext of password
+ * @details Handles encrypting or decrypting of password
+ */
+
 #ifndef ENCRYPT_H
 #define ENCRYPT_H
 
-// Include header file
 #include <sodium.h>
 #include <stdbool.h>
 #include <string.h>
 #include <stdio.h>
 
 
-// Macro definition
-// Max length of plaintext
+/**
+ * @brief Limit length of plaintext and ciphertext 
+ */
 #define MAX_PLAINTEXT_LEN 256
-// Max length of ciphertext
 #define MAX_CIPHERTEXT_LEN (MAX_PLAINTEXT_LEN + crypto_aead_xchacha20poly1305_ietf_ABYTES)
 
-// Error infomation
+/**
+ * @brief Error messages for encrypting.
+ */
 #define ERR_INIT "[Program error] INFO: Sodium initalization failed.\n"
 #define ERR_MASTERKEY_DERIVE "[Program error] INFO: Master key derivation failed.\n"
 #define ERR_PASSWORD_LENGTH "[Program error] INFO: Password is too long.\n"
@@ -22,7 +29,9 @@
 #define ERR_DECRYPT "[Usage Error] INFO: Incorrect master password or corrupted data.\n"
 
 
-// Structure of data need to store
+/**
+ * @brief Encrypted information.
+ */
 typedef struct
 {
     // Argond2id salt
@@ -39,15 +48,31 @@ typedef struct
 } EncryptedData;
 
 
-// Initialize sodium engine
-// Return true if success
-// else return false
+/** 
+* @brief Initialize sodium engine.
+* @return true if initialize sodium successfully.
+* @return false if initialize sodium failed.
+*/
 bool initSodium(void);
 
-// Encrypt password using master key and store into data
+/**
+ * @brief Encrypt password using master key.
+ * @param masterKey Master key.
+ * @param password Password need to be encrypt.
+ * @param data Encrypted information.
+ * @return true if encrypt successfully.
+ * @return false if encrypt failed.
+ */
 bool encryptPassword(const char *masterKey, const char *password, EncryptedData *data);
 
-// Decrypt encrypted password
+/**
+ * @brief Decrypt encrypted password using master key.
+ * @param masterKey Master key.
+ * @param data Encrypted information.
+ * @param plaintext A pointer to the location where the plaintext was output.
+ * @return true if decrypt successfully.
+ * @return false if decrypt failed.
+ */
 bool decryptEncryptedPassword(const char *masterKey, EncryptedData *data, char *plaintext);
 
 #endif

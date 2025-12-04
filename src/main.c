@@ -1,5 +1,4 @@
 #include <stdio.h>
-
 #include "cl_parser.h"
 #include "encrypt.h"
 

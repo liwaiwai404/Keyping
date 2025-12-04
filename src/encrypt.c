@@ -1,9 +1,6 @@
 #include "encrypt.h"
 
-/** 
-* @brief Initialize sodium engine
-* @return true success, false failed
-*/
+
 bool initSodium(void)
 {
     // Initialize failed
@@ -17,13 +14,6 @@ bool initSodium(void)
     return true;
 }
 
-/**
- * @brief Encrypt password using master key
- * @param masterKey Master key
- * @param password Password need to be encrypt
- * @param data Place to store encrypted info
- * @return true success, false failed
- */
 bool encryptPassword(const char *masterKey, const char *password, EncryptedData *data)
 {
     // Variable to store encrypted master key
@@ -70,14 +60,6 @@ bool encryptPassword(const char *masterKey, const char *password, EncryptedData 
     return true;
 }
 
-/**
- * @brief Decrypt encrypted password using master key
- * @param masterKey Master key
- * @param data Place to store encrypted info
- * @param password Place to put decrypted infomation
- * @param passwordLength Length of password
- * @return true: decrypt success, false failed
- */
 bool decryptEncryptedPassword(const char *masterKey, EncryptedData *data, char *plaintext)
 {
     // Variable to store encrypted master key
