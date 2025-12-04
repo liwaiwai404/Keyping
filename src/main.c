@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "cl_parser.h"
+#include "cl_interface.h"
 #include "encrypt.h"
 
 int main(int argc, char **argv)
@@ -8,32 +9,39 @@ int main(int argc, char **argv)
     if (!checkFormat(argc, argv))
         return 1;
 
-    //char *flag = argv[1];
+    char *flag = argv[1];
 
     // Get mode
-    //enum Mode mode = getMode(flag[1]);
+    enum Mode mode = getMode(flag[1]);
 
     // Initialize sodium engine
-    if(!initSodium())
-        return 2;
+    // if(!initSodium())
+    //     return 2;
     
-    const char *masterKey = "123456";
-    const char *password = "wasd1234!@#$";
-    EncryptedData data;
-    char plaintext[MAX_PLAINTEXT_LEN];
+    // const char *masterKey = "123456";
+    // const char *password = "wasd1234!@#$";
+    // EncryptedData data;
+    // char plaintext[MAX_PLAINTEXT_LEN];
 
-    printf("Master key: %s\n", masterKey);
+    // printf("Master key: %s\n", masterKey);
 
-    encryptPassword(masterKey, password, &data);
-    decryptEncryptedPassword(masterKey, &data, plaintext);
+    // encryptPassword(masterKey, password, &data);
+    // decryptEncryptedPassword(masterKey, &data, plaintext);
 
-    printf("Original: %s\n", password);
-    printf("Chipertext: %s Length: %lld\n", data.encryptedPassword, data.encryptedPasswordLength);
+    // printf("Original: %s\n", password);
+    // printf("Chipertext: %s Length: %lld\n", data.encryptedPassword, data.encryptedPasswordLength);
 
-    printf("Decrypt: %s\n", plaintext);
+    // printf("Decrypt: %s\n", plaintext);
 
+    PasswordInfo info;
+    if (!getPasswordInfo(&info, mode))
+        return 3;
 
-
+    printf("\n");
+    printf("%s\n", info.description);
+    printf("%s\n", info.username);
+    printf("%s\n", info.password);
+    printf("%s\n", info.masterKey);
 
     return 0;
 }

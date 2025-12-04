@@ -50,6 +50,7 @@ typedef struct
 
 /** 
 * @brief Initialize sodium engine.
+*
 * @return true if initialize sodium successfully.
 * @return false if initialize sodium failed.
 */
@@ -57,6 +58,7 @@ bool initSodium(void);
 
 /**
  * @brief Encrypt password using master key.
+ * 
  * @param masterKey Master key.
  * @param password Password need to be encrypt.
  * @param data Encrypted information.
@@ -67,6 +69,7 @@ bool encryptPassword(const char *masterKey, const char *password, EncryptedData 
 
 /**
  * @brief Decrypt encrypted password using master key.
+ * 
  * @param masterKey Master key.
  * @param data Encrypted information.
  * @param plaintext A pointer to the location where the plaintext was output.
@@ -75,4 +78,4 @@ bool encryptPassword(const char *masterKey, const char *password, EncryptedData 
  */
 bool decryptEncryptedPassword(const char *masterKey, EncryptedData *data, char *plaintext);
 
-#endif
+#endif // ENCRYPT_H
