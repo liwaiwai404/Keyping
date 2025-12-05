@@ -55,5 +55,13 @@ bool getPasswordInfo(PasswordInfo *passwordInfo, enum Mode mode)
     return true;
 }
 
+void printDataByRow(const char *description, const char *username, void *user_data)
+{
+    user_data = NULL;
+    if (user_data){}
+    printf("| %20s | %20s |\n", description, username);
+    printf("+----------------------+----------------------+\n");
+}
+
 
 

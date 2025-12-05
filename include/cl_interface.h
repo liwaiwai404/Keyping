@@ -50,5 +50,15 @@ typedef struct
  */
 bool getPasswordInfo(PasswordInfo *passwordInfo, enum Mode mode);
 
+/**
+ * @brief Print a row of data include desc, username, or other additional info
+ * 
+ * @param description Description found
+ * @param username Username found
+ * @param user_data Point to other additional data
+ */
+void printDataByRow(const char *description, const char *username, void *user_data);
+
+
 
 #endif // CL_INTERFACE_H
