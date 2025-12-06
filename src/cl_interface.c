@@ -25,20 +25,26 @@ bool getPasswordInfo(PasswordInfo *passwordInfo, enum Mode mode)
         return false;
     }
     
-    switch (mode)
+
+    // Add mode need password infomation
+    if (mode == ADD || mode == MODIFY)
     {
-    case ADD:
         // Prompt user for password
-        printf("[Password]>>>");
+        if (mode == ADD)
+            printf("[Password]>>>");
+        else
+            printf("[New Password]>>>");
+        
         if (!getInfo(passwordInfo->password, sizeof(passwordInfo->password)))
         {
             fprintf(stderr, ERR_GETINFO);
             return false;
         }
-        return true;
-    case QUERY:
-    case MODIFY:
-    case DELETE:
+    }
+
+    // Delete mode not need key
+    if (mode != DELETE)
+    {
         // Prompt user for master key
         printf("[Key]>>>");
         if (!getInfo(passwordInfo->masterKey, sizeof(passwordInfo->masterKey)))
@@ -46,12 +52,8 @@ bool getPasswordInfo(PasswordInfo *passwordInfo, enum Mode mode)
             fprintf(stderr, ERR_GETINFO);
             return false;
         }
-        return true;
-    default:
-        fprintf(stderr, ERR_GETINFO);
-        return false;
     }
-
+    
     return true;
 }
 

@@ -19,6 +19,9 @@
 #define ERR_PREPARE "[DB error] INFO: Prepare failed. %s\n"
 #define ERR_INSERT "[DB error] INFO: Insert failed. %s\n"
 #define ERR_LIST "[DB error] INFO: List failed. %s\n"
+#define ERR_QUERY "[DB Error] INFO: Query failed. %s\n"
+#define ERR_UPDATE "[DB error] INFO: Update failed. %s\n"
+#define ERR_DELETE "[DB error] INFO: Delete failed. %s\n"
 
 
 /**
@@ -51,12 +54,11 @@ bool addAccount(sqlite3 *db, const PasswordInfo *info, const EncryptedData *enc)
  * @brief Retrieve an account entry by description.
  * 
  * @param db Database handle.
- * @param description The unique description to search for.
- * @param info Output: will be filled with username (and description).
+ * @param info Provide description and username
  * @param enc Output: will be filled with encrypted data (salt, nonce, ciphertext).
  * @return true if found, false if not found or error.
  */
-//bool queryAccount(sqlite3 *db, const char *description, PasswordInfo *info, EncryptedData *enc);
+bool queryAccount(sqlite3 *db, const PasswordInfo *info, EncryptedData *encData);
 
 /**
  * @brief Define callback function
@@ -64,12 +66,12 @@ bool addAccount(sqlite3 *db, const PasswordInfo *info, const EncryptedData *enc)
  * 
  * @param description Description found
  * @param username Username found
- * @param user_data 用户传递的额外参数
+ * @param user_data Additional data
  */
 typedef void (*ListCallback)(const char *description, const char *username, void *user_data);
 
 /**
- * @brief Search or list accounts.
+ * @brief List all accounts or accounts by keyword.
  * 
  * @param db Database handle.
  * @param searchQuery Keyword to search. If NULL or empty, list all.
@@ -78,5 +80,22 @@ typedef void (*ListCallback)(const char *description, const char *username, void
  * @return true if query executed successfully.
  */
 bool listAccounts(sqlite3 *db, const char *searchQuery, ListCallback callback, void *user_data);
+
+/**
+ * @brief Update account
+ * 
+ * @param db Database handle.
+ * @param info Provide description and username
+ * @param enc Provide new encrypted data (salt, nonce, ciphertext).
+ */
+bool updateAccount(sqlite3 *db, const PasswordInfo *info, const EncryptedData *enc);
+
+/**
+ * @brief Delete account
+ * 
+ * @param db Database handle.
+ * @param info Provide description and username
+ */
+bool deleteAccount(sqlite3 *db, const PasswordInfo *info);
 
 #endif // STORAGE_H

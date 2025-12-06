@@ -16,7 +16,7 @@
  */
 #define ERR_ARGNUM "[Usage error] INFO: wrong number of arguments\n"
 #define ERR_ARGFORM "[Usage error] INFO: wrong form of arguments\n"
-#define ERR_ARGMODE "[Usqge error] INFO: wrong mode\n"
+#define ERR_ARGMODE "[Usage error] INFO: wrong mode\n"
 
 /**
  * @brief Application operation modes derived from CLI arguments.

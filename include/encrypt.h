@@ -26,7 +26,7 @@
 #define ERR_MASTERKEY_DERIVE "[Program error] INFO: Master key derivation failed.\n"
 #define ERR_PASSWORD_LENGTH "[Program error] INFO: Password is too long.\n"
 #define ERR_ENCRYPT "[Program error] INFO: Encrypt password failed.\n"
-#define ERR_DECRYPT "[Usage Error] INFO: Incorrect master password or corrupted data.\n"
+#define ERR_DECRYPT "[Usage Error] INFO: Incorrect master key or corrupted data.\n"
 
 
 /**

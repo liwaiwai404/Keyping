@@ -7,7 +7,7 @@
 static const char *CREATE_TABLE_SQL = 
     "CREATE TABLE IF NOT EXISTS accounts ("
     "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-    "description TEXT NOT NULL UNIQUE, "
+    "description TEXT NOT NULL, "
     "username TEXT, "
     "salt BLOB NOT NULL, "
     "nonce BLOB NOT NULL, "
@@ -155,3 +155,150 @@ bool listAccounts(sqlite3 *db, const char *searchQuery, ListCallback callback, v
     
     return success;
 }
+
+bool queryAccount(sqlite3 *db, const PasswordInfo *info, EncryptedData *encData)
+{
+    // Sql template
+    const char *sql = "SELECT salt, nonce, ciphertext, ciphertext_len FROM accounts WHERE description = ? AND username = ?;";
+    sqlite3_stmt *stmt;
+    bool success = true;
+
+    // Prepare
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK)
+    {
+        fprintf(stderr, ERR_PREPARE, sqlite3_errmsg(db));
+        return false;
+    }
+
+    // Bind text
+    sqlite3_bind_text(stmt, 1, info->description, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, info->username, -1, SQLITE_STATIC);
+
+    // Query a data row
+    if (sqlite3_step(stmt) == SQLITE_ROW)
+    {
+        // Get salt
+        const void *saltBlob = sqlite3_column_blob(stmt, 0);
+        if (saltBlob)
+            memcpy(encData->masterKeySalt, saltBlob, sizeof(encData->masterKeySalt));
+
+        // Get nonce
+        const void *nonceBlob = sqlite3_column_blob(stmt, 1);
+        if (nonceBlob)
+            memcpy(encData->nonce, nonceBlob, sizeof(encData->nonce));
+
+        // Get ciphertext
+        const void *cipherBlob = sqlite3_column_blob(stmt, 2);
+        unsigned long long bytes = sqlite3_column_bytes(stmt, 2);
+
+        if (bytes > sizeof(encData->encryptedPassword))
+        {
+            fprintf(stderr, ERR_QUERY, sqlite3_errmsg(db));
+            success = false;
+        }
+        else
+        {
+            if (cipherBlob)
+                memcpy(encData->encryptedPassword, cipherBlob, bytes);
+
+            encData->encryptedPasswordLength = sqlite3_column_int64(stmt, 3);
+            success = true;
+        }
+    }
+    // Not found
+    else
+    {
+        fprintf(stderr, ERR_QUERY, sqlite3_errmsg(db));
+        success = false;
+    }
+
+    // Clean memory
+    sqlite3_finalize(stmt);
+
+    return success;
+}
+
+bool updateAccount(sqlite3 *db, const PasswordInfo *info, const EncryptedData *enc)
+{
+    // SQL: Update username and encrypted data based on description
+    const char *sql = "UPDATE accounts SET salt=?, nonce=?, ciphertext=?, ciphertext_len=? WHERE description=? AND username=?;";
+    sqlite3_stmt *stmt;
+    bool result = false;
+
+    // Prepare
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK)
+    {
+        fprintf(stderr, ERR_PREPARE, sqlite3_errmsg(db));
+        return false;
+    }
+
+    // Bind data
+    sqlite3_bind_blob(stmt, 1, enc->masterKeySalt, sizeof(enc->masterKeySalt), SQLITE_STATIC);
+    sqlite3_bind_blob(stmt, 2, enc->nonce, sizeof(enc->nonce), SQLITE_STATIC);
+    sqlite3_bind_blob(stmt, 3, enc->encryptedPassword, enc->encryptedPasswordLength, SQLITE_STATIC);
+    sqlite3_bind_int64(stmt, 4, (sqlite_int64)enc->encryptedPasswordLength);
+
+    sqlite3_bind_text(stmt, 5, info->description, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 6, info->username, -1, SQLITE_STATIC);
+
+    // Execute
+    if (sqlite3_step(stmt) == SQLITE_DONE)
+    {
+        if (sqlite3_changes(db) > 0)
+            result = true;
+        else
+        {
+            fprintf(stderr, ERR_UPDATE, sqlite3_errmsg(db));
+            result = false;
+        }
+    }
+    else
+        fprintf(stderr, ERR_UPDATE, sqlite3_errmsg(db));
+
+    // Clean memory
+    sqlite3_finalize(stmt);
+
+    return result;
+}
+
+bool deleteAccount(sqlite3 *db, const PasswordInfo *info)
+{
+    // SQL: Update username and encrypted data based on description
+    const char *sql = "DELETE FROM accounts WHERE description = ? AND username = ?;";
+    sqlite3_stmt *stmt;
+    bool result = false;
+
+    // Prepare
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK)
+    {
+        fprintf(stderr, ERR_PREPARE, sqlite3_errmsg(db));
+        return false;
+    }
+
+    // Bind description
+    sqlite3_bind_text(stmt, 1, info->description, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, info->username, -1, SQLITE_STATIC);
+
+    // Execute
+    if (sqlite3_step(stmt) == SQLITE_DONE)
+    {
+        if (sqlite3_changes(db) > 0)
+        {
+            result = true;
+        }
+        else
+        {
+            fprintf(stderr, ERR_DELETE, sqlite3_errmsg(db));
+            result = false;
+        }
+    }
+    else
+    {
+        fprintf(stderr, ERR_DELETE, sqlite3_errmsg(db));
+    }
+
+    // Clean memory
+    sqlite3_finalize(stmt);
+
+    return result;
+}   
