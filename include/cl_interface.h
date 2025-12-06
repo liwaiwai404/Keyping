@@ -7,9 +7,7 @@
 #define CL_INTERFACE_H
 
 #include <stdbool.h>
-#include <stdio.h>
 #include "cl_parser.h"
-#include "utils.h"
 
 /**
  * @brief Limit length of information.
@@ -20,6 +18,15 @@
  * @brief Error information
  */
 #define ERR_GETINFO "[Usage error] INFO: Get password information failed.\n"
+
+/**
+ * @brief Success information
+ */
+#define SUCCESS_ADD "[Success] An account has been added.\n"
+#define SUCCESS_LIST "[Success] Accounts has been listed.\n"
+#define SUCCESS_QUERY "[Success] Password has been found.\n"
+#define SUCCESS_MODIFY "[Success] Password for this account has been modified.\n"
+#define SUCCESS_DELETE "[Success] Account has been deleted.\n"
 
 
 /**
@@ -59,6 +66,21 @@ bool getPasswordInfo(PasswordInfo *passwordInfo, enum Mode mode);
  */
 void printDataByRow(const char *description, const char *username, void *user_data);
 
+/**
+ * @brief Print data table header
+ */
+void printHeader(void);
 
+/**
+ * @brief Print data table footer
+ */
+void printFooter(void);
+
+/**
+ * @brief Print success information by mode
+ * 
+ * @param mode Operation mode
+ */
+void printSuccessInfo(enum Mode mode);
 
 #endif // CL_INTERFACE_H

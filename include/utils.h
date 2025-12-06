@@ -6,10 +6,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <ctype.h>
 #include <stdbool.h>
-#include <stdio.h>
-#include <string.h>
+
 
 /**
  * @brief Read a line of data safely

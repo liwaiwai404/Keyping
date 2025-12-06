@@ -1,4 +1,6 @@
 #include "encrypt.h"
+#include <stdio.h>
+#include <string.h>
 
 
 bool initSodium(void)

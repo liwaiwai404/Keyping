@@ -1,4 +1,6 @@
 #include "cl_parser.h"
+#include <stdio.h>
+#include <string.h>
 
 
 bool checkFormat(const int argc, char **argv)

@@ -1,4 +1,8 @@
 #include "cl_interface.h"
+#include <stdbool.h>
+#include <stdio.h>
+#include "utils.h"
+
 
 bool getPasswordInfo(PasswordInfo *passwordInfo, enum Mode mode)
 {
@@ -63,6 +67,44 @@ void printDataByRow(const char *description, const char *username, void *user_da
     if (user_data){}
     printf("| %20s | %20s |\n", description, username);
     printf("+----------------------+----------------------+\n");
+}
+
+void printHeader(void)
+{
+    printf("+---------------------------------------------+\n");
+    printf("|                Account list                 |\n");
+    printf("+----------------------+----------------------+\n");
+    printf("|          Description |             Username |\n");
+    printf("+----------------------+----------------------+\n");
+}
+
+void printFooter(void)
+{
+    printf("+----------------------+----------------------+\n");
+}
+
+void printSuccessInfo(enum Mode mode)
+{
+    switch (mode)
+    {
+    case ADD:
+        printf(SUCCESS_ADD);
+        break;
+    case LIST:
+        printf(SUCCESS_LIST);
+        break;
+    case QUERY:
+        printf(SUCCESS_QUERY);
+        break;
+    case MODIFY:
+        printf(SUCCESS_MODIFY);
+        break; 
+    case DELETE:
+        printf(SUCCESS_DELETE);
+        break;   
+    default:
+        break;
+    }
 }
 
 

@@ -1,3 +1,6 @@
+#include <ctype.h>
+#include <stdio.h>
+#include <string.h>
 #include "utils.h"
 
 bool readLine(char *buffer, int size)

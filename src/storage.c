@@ -1,7 +1,8 @@
 #include "storage.h"
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
+
 
 // SQL to create the table
 static const char *CREATE_TABLE_SQL = 
@@ -79,12 +80,6 @@ bool addAccount(sqlite3 *db, const PasswordInfo *info, const EncryptedData *enc)
     sqlite3_finalize(stmt);
     return result;
 }
-
-// bool queryAccount(sqlite3 *db, const char *description, PasswordInfo *info, EncryptedData *enc)
-// {
-//     // SQL query satement
-//     //const char *sql = "SELECT username, salt, nonce";
-// }
 
 bool listAccounts(sqlite3 *db, const char *searchQuery, ListCallback callback, void *user_data)
 {
