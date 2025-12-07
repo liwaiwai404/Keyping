@@ -71,4 +71,13 @@ void copyToClipboard(const char *plaintext);
  */
 bool tryCommand(const char *cmd, const char *plaintext);
 
+/**
+ * @brief Get the standard database path for the current user
+ * (e.g., ~/.local/share/keyping/keyping.db)
+ * 
+ * @param buffer Buffer to store the path
+ * @param size Size of the buffer
+ */
+void getAppDBPath(char *buffer, size_t size);
+
 #endif // UTILS_H

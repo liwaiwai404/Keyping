@@ -1,6 +1,8 @@
 #include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <termios.h> 
 #include <unistd.h>  
 #include "utils.h"
@@ -167,4 +169,40 @@ bool tryCommand(const char *cmd, const char *plaintext)
         return false;
 
     return true;
+}
+
+// Makesure the path exist
+static void ensureDirectoryExists(const char *path) {
+    struct stat st = {0};
+    if (stat(path, &st) == -1) {
+        // If the dir not exist, try to create
+        // Permission 0700: Read and write only for the current user
+        mkdir(path, 0700);
+    }
+}
+
+void getAppDBPath(char *buffer, size_t size) {
+    const char *homeDir = getenv("HOME");
+    
+    if (homeDir == NULL) {
+        // Can't find home dir, back to current path
+        snprintf(buffer, size, "keyping.db");
+        return;
+    }
+
+    // Construct base path ~/.local/share
+    char basePath[512];
+    snprintf(basePath, sizeof(basePath), "%s/.local", homeDir);
+    ensureDirectoryExists(basePath);
+
+    snprintf(basePath, sizeof(basePath), "%s/.local/share", homeDir);
+    ensureDirectoryExists(basePath);
+
+    // Construct application path ~/.local/share/keyping
+    char appPath[512];
+    snprintf(appPath, sizeof(appPath), "%s/.local/share/keyping", homeDir);
+    ensureDirectoryExists(appPath);
+
+    // Get the final database path
+    snprintf(buffer, size, "%s/keyping.db", appPath);
 }

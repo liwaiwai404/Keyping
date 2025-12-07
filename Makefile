@@ -27,7 +27,11 @@ LDLIBS := -lsodium -lsqlite3
 DEPFLAGS ?= -MMD -MP
 LDFLAGS ?= 
 
-.PHONY: all clean
+# Install
+PREFIX ?= /usr/local
+BIN_DIR := $(PREFIX)/bin
+
+.PHONY: all clean install uninstall
 
 # Normal compile=======================================
 all: $(BUILD_DIR)/$(TARGET_EXEC)
@@ -49,11 +53,23 @@ release: CFLAGS += -O3 -march=native -DNDEBUG
 release: LDFLAGS += -s
 release: clean all
 
+# Install and uninstall =======================
+install: all
+	@echo "Installing to $(BIN_DIR)..."
+	@mkdir -p $(BIN_DIR)
+	@cp $(BUILD_DIR)/$(TARGET_EXEC) $(BIN_DIR)/
+	@chmod 755 $(BIN_DIR)/$(TARGET_EXEC)
+	@echo "Installation complete."
+	@echo "Data will be stored in ~/.local/share/keyping/"
+
+uninstall:
+	@echo "Uninstalling keyping..."
+	@rm -f $(BIN_DIR)/$(TARGET_EXEC)
+	@echo "Uninstalled."
+	@echo "Note: User data is still in ~/.local/share/keyping/."
+
 # Remove build directory
 clean:
 	rm -rf $(BUILD_DIR)
 
-print:
-	echo $(OBJS)
-	echo $(OBJ_DIR)
 

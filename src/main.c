@@ -5,6 +5,7 @@
 #include <sqlite3.h>
 #include <stdio.h>
 #include "storage.h"
+#include "utils.h"
 
 /**
  * @brief Exit code
@@ -43,9 +44,13 @@ int main(int argc, char **argv)
             return EXIT_GETPWINFO_ERR;
     }
     
+    // Get database path
+    char dbPath[1024];
+    getAppDBPath(dbPath, sizeof(dbPath));
+
     // Init database
     sqlite3 *db;
-    if (!initDatabase("keyping.db", &db))
+    if (!initDatabase(dbPath, &db))
         return EXIT_DB_INIT;
 
     // Init sodium engine
