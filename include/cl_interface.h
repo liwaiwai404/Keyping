@@ -18,6 +18,7 @@
  * @brief Error information
  */
 #define ERR_GETINFO "[Usage error] INFO: Get password information failed.\n"
+#define ERR_ENTER_AGAIN "[Usage error] INFO: The two passwords did not match.\n"
 
 /**
  * @brief Success information

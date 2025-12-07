@@ -3,6 +3,7 @@
 #include <sodium.h>
 #include <stdio.h>
 #include "storage.h"
+#include "utils.h"
  
 
 bool handleAdd(PasswordInfo *info, sqlite3 *db)
@@ -51,7 +52,8 @@ bool handleQuery(PasswordInfo *info, sqlite3 *db)
     if (!decryptEncryptedPassword(info->masterKey, &encryptedData, plaintext))
         return false;
 
-    printf("%s\n", plaintext);
+    // Copy to clipboard
+    copyToClipboard(plaintext);
 
     return true;
 }

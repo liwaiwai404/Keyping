@@ -1,6 +1,7 @@
 #include "cl_interface.h"
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 #include "utils.h"
 
 
@@ -14,7 +15,7 @@ bool getPasswordInfo(PasswordInfo *passwordInfo, enum Mode mode)
     }
 
     // Prompt user for description
-    printf("[Description]>>>");
+    printf(ANSI_COLOR_CYAN ANSI_STYLE_BOLD"[Description]>>>"ANSI_COLOR_RESET);
     if (!getInfo(passwordInfo->description, sizeof(passwordInfo->description)))
     {
         fprintf(stderr, ERR_GETINFO);
@@ -22,7 +23,7 @@ bool getPasswordInfo(PasswordInfo *passwordInfo, enum Mode mode)
     }
     
     // Prompt user for username
-    printf("[Username]>>>");
+    printf(ANSI_COLOR_CYAN ANSI_STYLE_BOLD"[Username]>>>"ANSI_COLOR_RESET);
     if (!getInfo(passwordInfo->username, sizeof(passwordInfo->username)))
     {
         fprintf(stderr, ERR_GETINFO);
@@ -34,23 +35,43 @@ bool getPasswordInfo(PasswordInfo *passwordInfo, enum Mode mode)
     if (mode == ADD || mode == MODIFY)
     {
         // Prompt user for password
+        char tempPassword1[MAX_PASSWORDINFO_LEN];
         if (mode == ADD)
-            printf("[Password]>>>");
+            printf(ANSI_COLOR_MAGENTA "[Password]>>>" ANSI_COLOR_RESET);
         else
-            printf("[New Password]>>>");
+            printf(ANSI_COLOR_MAGENTA "[New Password]>>>" ANSI_COLOR_RESET);
         
-        if (!getInfo(passwordInfo->password, sizeof(passwordInfo->password)))
+        if (!getInfoSecure(tempPassword1, sizeof(tempPassword1)))
         {
             fprintf(stderr, ERR_GETINFO);
             return false;
         }
+
+        // Prompt user for password again
+        char tempPassword2[MAX_PASSWORDINFO_LEN];
+        printf(ANSI_COLOR_MAGENTA "[Enter again]>>>" ANSI_COLOR_RESET);
+
+        if (!getInfoSecure(tempPassword2, sizeof(tempPassword2)))
+        {
+            fprintf(stderr, ERR_GETINFO);
+            return false;
+        }
+
+        if (strcmp(tempPassword1, tempPassword2) != 0)
+        {
+            fprintf(stderr, ERR_ENTER_AGAIN);
+            return false;
+        }
+
+        // Store info
+        memcpy(passwordInfo->password, tempPassword1, sizeof(passwordInfo->password));
     }
 
     // Delete mode not need key
     if (mode != DELETE)
     {
         // Prompt user for master key
-        printf("[Key]>>>");
+        printf(ANSI_COLOR_YELLOW ANSI_STYLE_BOLD"[Key]>>>"ANSI_COLOR_RESET);
         if (!getInfo(passwordInfo->masterKey, sizeof(passwordInfo->masterKey)))
         {
             fprintf(stderr, ERR_GETINFO);

@@ -21,7 +21,7 @@ CC := gcc
 # C Preprocess flags
 CPPFLAGS := -I$(INC_DIR)
 # Compile flags
-CFLAGS ?= -O2 -Wall -Wextra -Werror -std=c11
+CFLAGS ?= -O2 -Wall -Wextra -Werror -std=gnu11
 # Link library flags
 LDLIBS := -lsodium -lsqlite3
 DEPFLAGS ?= -MMD -MP

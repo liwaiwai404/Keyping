@@ -8,6 +8,28 @@
 
 #include <stdbool.h>
 
+/**
+ * @brief Error information
+ */
+#define ERR_COPY "[Copy error] Failed to execute clip.exe or access clipboard pipe.\n"
+
+/**
+ * @brief Success information
+ */
+#define SUCCESS_COPY "[Success] Password has been copied to clipboard.\n"
+
+// ANSI Color define
+#define ANSI_COLOR_RED     "\x1b[31m"
+#define ANSI_COLOR_GREEN   "\x1b[32m"
+#define ANSI_COLOR_YELLOW  "\x1b[33m"
+#define ANSI_COLOR_BLUE    "\x1b[34m"
+#define ANSI_COLOR_MAGENTA "\x1b[35m"
+#define ANSI_COLOR_CYAN    "\x1b[36m"
+#define ANSI_COLOR_RESET   "\x1b[0m"
+
+// ANSI Style define
+#define ANSI_STYLE_BOLD    "\x1b[1m"
+#define ANSI_STYLE_UNDERLINE "\x1b[4m"
 
 /**
  * @brief Read a line of data safely
@@ -24,5 +46,21 @@ bool readLine(char *buffer, int size);
  * @param size Limit size of information
  */
 bool getInfo(char *info, int size);
+
+/**
+ * @brief Securely read a password without echoing characters.
+ * 
+ * @param buffer Buffer to store the password.
+ * @param size Size of the buffer.
+ * @return true if read successfully.
+ */
+bool getInfoSecure(char *buffer, int size);
+
+/**
+ * @brief Copy text to Windows clipboard (WSL specific)
+ * 
+ * @param plaintext The text to copy
+ */
+void copyToClipboard(const char *plaintext);
 
 #endif // UTILS_H

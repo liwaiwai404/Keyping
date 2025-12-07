@@ -1,6 +1,8 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
+#include <termios.h> 
+#include <unistd.h>  
 #include "utils.h"
 
 bool readLine(char *buffer, int size)
@@ -60,5 +62,74 @@ bool getInfo(char *info, int size)
 
         // Not EOF
         printf("[Wrong]>>>");
+    }
+}
+
+bool getInfoSecure(char *buffer, int size)
+{
+    struct termios oldt, newt;
+    bool success = false;
+
+    // Get current terminal attributes
+    if (tcgetattr(STDIN_FILENO, &oldt) != 0)
+    {
+        return false;
+    }
+
+    // Copy the attribute and modify it: Turn off echo (ECHO)
+    newt = oldt;
+    newt.c_lflag &= ~ECHO;
+
+    // Set new attributes
+    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &newt) != 0)
+    {
+        return false;
+    }
+
+    // Read password
+    if (fgets(buffer, size, stdin) != NULL)
+    {
+        size_t len = strlen(buffer);
+        // Remove '\n'
+        if (len > 0 && buffer[len - 1] == '\n')
+        {
+            buffer[len - 1] = '\0';
+        }
+        success = true;
+    }
+
+    // Restore the terminal to its original properties (enable echo).
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+
+    // Newline
+    printf("\n");
+
+    return success;
+}
+
+void copyToClipboard(const char *plaintext)
+{
+    // Call clip.exe program
+    FILE *pipe = popen("clip.exe", "w");
+    
+    // Access clip
+    if (pipe != NULL)
+    {
+        // Pass plaintext to clip.exe 
+        fprintf(pipe, "%s", plaintext);
+        
+        // Close pipe
+        if (pclose(pipe) == 0)
+        {
+            printf(SUCCESS_COPY);
+        }
+        else
+        {
+            fprintf(stderr, ERR_COPY);
+        }
+    }
+    else
+    {
+        fprintf(stderr, ERR_COPY);
     }
 }
