@@ -6,6 +6,19 @@
 #include <stdio.h>
 #include "storage.h"
 
+/**
+ * @brief Exit code
+ */
+#define EXIT_FORMAT_ERR 1
+#define EXIT_GETPWINFO_ERR 2
+#define EXIT_DB_INIT 3
+#define EXIT_SODIUM_INIT 4
+#define EXIT_ADD_ERR 5
+#define EXIT_LIST_ERR 6
+#define EXIT_QUERY_ERR 7
+#define EXIT_MODIFY_ERR 8
+#define EXIT_DELETE_ERR 9
+
 
 /**
  * @brief Program entry point
@@ -14,32 +27,32 @@ int main(int argc, char **argv)
 {
     // Check CLI
     if (!checkFormat(argc, argv))
-        return 1;
+        return EXIT_FORMAT_ERR;
 
     // Get mode
     char *flag = argv[1];
     enum Mode mode = getMode(flag[1]);
     if (mode == 0)
-        return 1;
+        return EXIT_FORMAT_ERR;
 
     // Get data by mode
     PasswordInfo info;
     if (mode != LIST)
     {
         if (!getPasswordInfo(&info, mode))
-            return 2;
+            return EXIT_GETPWINFO_ERR;
     }
     
     // Init database
     sqlite3 *db;
     if (!initDatabase("keyping.db", &db))
-        return 3;
+        return EXIT_DB_INIT;
 
     // Init sodium engine
     if (!initSodium())
     {
         closeDatabase(db);
-        return 4;
+        return EXIT_SODIUM_INIT;
     }
         
 
@@ -49,7 +62,7 @@ int main(int argc, char **argv)
     {
     case ADD:
         if (!handleAdd(&info, db))
-            exitCode = 5;
+            exitCode = EXIT_ADD_ERR;
         break;
 
     case LIST:
@@ -58,22 +71,22 @@ int main(int argc, char **argv)
         if (argc == 3)
             keyword = argv[2];
         if(!handleList(db, keyword))
-            exitCode = 6;
+            exitCode = EXIT_LIST_ERR;
         break;
 
     case QUERY:
         if (!handleQuery(&info, db))
-            exitCode = 6;
+            exitCode = EXIT_QUERY_ERR;
         break;
 
     case MODIFY:
         if (!handleModify(&info, db))
-            exitCode = 7;
+            exitCode = EXIT_MODIFY_ERR;
         break;
         
     case DELETE:
         if (!handlDelete(&info, db))
-            exitCode = 8;
+            exitCode = EXIT_DELETE_ERR;
         break;
     default:
         break;
