@@ -11,7 +11,8 @@
 /**
  * @brief Error information
  */
-#define ERR_COPY "[Copy error] Failed to execute clip.exe or access clipboard pipe.\n"
+#define ERR_COPY "[Copy error] INFO: Copy failed.\n"
+#define ERR_MISS_CLIP "[Copy error] No clipboard tool found.\n"
 
 /**
  * @brief Success information
@@ -29,7 +30,6 @@
 
 // ANSI Style define
 #define ANSI_STYLE_BOLD    "\x1b[1m"
-#define ANSI_STYLE_UNDERLINE "\x1b[4m"
 
 /**
  * @brief Read a line of data safely
@@ -62,5 +62,13 @@ bool getInfoSecure(char *buffer, int size);
  * @param plaintext The text to copy
  */
 void copyToClipboard(const char *plaintext);
+
+/**
+ * @brief Try to execute clipboard tool to store plaintext
+ * 
+ * @param cmd Clipboard tool
+ * @param plaintext Plaintext of password
+ */
+bool tryCommand(const char *cmd, const char *plaintext);
 
 #endif // UTILS_H

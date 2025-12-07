@@ -109,27 +109,62 @@ bool getInfoSecure(char *buffer, int size)
 
 void copyToClipboard(const char *plaintext)
 {
-    // Call clip.exe program
-    FILE *pipe = popen("clip.exe", "w");
+    bool success = false;
     
-    // Access clip
-    if (pipe != NULL)
-    {
-        // Pass plaintext to clip.exe 
-        fprintf(pipe, "%s", plaintext);
+    // Windows
+    #if defined(_WIN32) || defined(_WIN64)
+        success = tryCommand("clip", plaintext);
+    // MacOS
+    #elif defined(__APPLE__)
+        success = tryCommand("pbcopy", plaintext);
+    // Linux (include WSL)
+    #elif defined(__linux__)
+        // Try Wayland 
+        if (!success)
+            success = tryCommand("wl-copy 2>/dev/null", plaintext);
         
-        // Close pipe
-        if (pclose(pipe) == 0)
-        {
-            printf(SUCCESS_COPY);
-        }
-        else
-        {
-            fprintf(stderr, ERR_COPY);
-        }
-    }
+        // Try X11
+        if (!success)
+            success = tryCommand("xclip -selection clipboard 2>/dev/null", plaintext);
+        if (!success)
+            success = tryCommand("xsel --clipboard --input 2>/dev/null", plaintext);
+
+        // WSL (WSL can call clip.exe)
+        if (!success)
+            success = tryCommand("clip.exe 2>/dev/null", plaintext);
+    #else
+        fprint(stderr, ERR_COPY);
+        return;
+    #endif
+
+    if (success)
+        printf(SUCCESS_COPY);
     else
     {
-        fprintf(stderr, ERR_COPY);
+        // Prompt users on Linux to install missing tools
+        #ifdef __linux__
+            fprintf(stderr, ERR_MISS_CLIP);
+        #else
+            fprintf(stderr, ERR_COPY); // 使用你 utils.h 中定义的宏
+        #endif
     }
+}
+
+bool tryCommand(const char *cmd, const char *plaintext)
+{
+    // Connect to command line clipboard tool
+    FILE *pipe = popen(cmd, "w");
+
+    // Access clipboard tool
+    if (pipe == NULL)
+        return false;
+
+    // Pass plaintext to clipboard tool
+    fprintf(pipe, "%s", plaintext);
+        
+    // Close pipe
+    if (pclose(pipe) != 0)
+        return false;
+
+    return true;
 }
