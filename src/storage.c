@@ -13,7 +13,8 @@ static const char *CREATE_TABLE_SQL =
     "salt BLOB NOT NULL, "
     "nonce BLOB NOT NULL, "
     "ciphertext BLOB NOT NULL, "
-    "ciphertext_len INTEGER NOT NULL"
+    "ciphertext_len INTEGER NOT NULL, "
+    "UNIQUE(description, username)"
     ");";
 
 
