@@ -86,22 +86,22 @@ void printDataByRow(const char *description, const char *username, void *user_da
 {
     user_data = NULL;
     if (user_data){}
-    printf("| %20s | %20s |\n", description, username);
-    printf("+----------------------+----------------------+\n");
+    printf("| %22s | %22s |\n", description, username);
+    printf("+------------------------+------------------------+\n");
 }
 
 void printHeader(void)
 {
-    printf("+---------------------------------------------+\n");
-    printf("|                Account list                 |\n");
-    printf("+----------------------+----------------------+\n");
-    printf("|          Description |             Username |\n");
-    printf("+----------------------+----------------------+\n");
+    printf("+-------------------------------------------------+\n");
+    printf("|                  Account list                   |\n");
+    printf("+------------------------+------------------------+\n");
+    printf("|            Description |               Username |\n");
+    printf("+------------------------+------------------------+\n");
 }
 
 void printFooter(void)
 {
-    printf("+----------------------+----------------------+\n");
+    printf("+------------------------+------------------------+\n");
 }
 
 void printSuccessInfo(enum Mode mode)

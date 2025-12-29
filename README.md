@@ -15,20 +15,18 @@ Keyping 是一个基于 C 语言编写的轻量、安全的命令行密码管理
 
 * **GCC** (支持 C11)
 * **Make**
-* **SQLite3** (`libsqlite3-dev` 或 `sqlite-devel`)
-* **Libsodium** (`libsodium-dev` 或 `libsodium-devel`)
 
 **Ubuntu/Debian:**
 ```bash
 sudo apt update
-sudo apt install build-essential libsodium-dev libsqlite3-dev
+sudo apt install build-essential
 ```
 
 ## 🚀 编译安装 (Compile and install)
 ```bash
 # 普通编译 -普通编译选项且会产生中间文件
 make 
-# 编译发布版 -更高级的优化编译选项，只留下可执行文件
+# 编译发布版 -更高级的优化编译选项
 make release
 
 # 安装 -将编译生成的可执行文件keyping放到 /usr/local/bin 中

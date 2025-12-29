@@ -27,3 +27,5 @@ keyping.db
 *.d
 # 目标文件 (如果它们出现在 build 目录外)
 *.o
+
+vendor/libsodium_install/
